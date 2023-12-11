@@ -31,7 +31,7 @@ def extrai_link(news):
     return link
 
 
-def empacotador():
+def empacotador_news():
     list_news = []
     for news in busca_noticias():
         titulo = extrai_titulo(news)
@@ -41,4 +41,4 @@ def empacotador():
         list_news.append(news_dict)
     return list_news
 
-empacotador()
+print(empacotador_news())

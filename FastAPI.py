@@ -1,15 +1,22 @@
 from fastapi import FastAPI
-from busca_noticias import empacotador
-
+from busca_noticias import empacotador_news
+from weatherAPI_requests import empacotador_tempo
 
 app = FastAPI()
+
+
 @app.get("/")
 async def root():
-    return ("Welcome to the news stuff")
-
+    return "<h1>Welcome to WeazelNews website</h1>"
 
 
 @app.get("/News")
-def mostra_noticias():
-    noticias = empacotador()
-    return noticias
+def show_news():
+    news = empacotador_news()
+    return news
+
+
+@app.get("/Weather")
+def show_weather():
+    weather = empacotador_tempo()
+    return weather
