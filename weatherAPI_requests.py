@@ -67,7 +67,6 @@ def horario_sol(json):
 
 
 def empacotador_tempo():
-    weather = []
     lat, lng = achar_lat_lng()
     json = pegar_previsao_tempo(lat, lng)
     desc, icon = clima(json)
@@ -80,12 +79,9 @@ def empacotador_tempo():
     wind_info = {"velocidade(m/s)": velocidade, "direção": direcao}
     sun_info = {"Nascer do Sol": sunrise, "Por do Sol": sunset}
     rain_info = {"Volume de chuva": vol_chuva}
-    weather.append(clima_info)
-    weather.append(temp_info)
-    weather.append(wind_info)
-    weather.append(sun_info)
-    weather.append(rain_info)
+    weather = [clima_info, temp_info, wind_info, sun_info, rain_info]
     return weather
 
 
 print(empacotador_tempo())
+
