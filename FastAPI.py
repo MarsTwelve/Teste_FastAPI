@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from busca_noticias import empacotador_news
-from WeatherData import WeatherData
+from WeatherData import Localization
 
 app = FastAPI(title="FastAPI_Teste", description="<h1>descrição</h1>", summary="sumário",
               version="0.0.2", terms_of_service="https://twitter.com/en/tos", contact={"nome": "Roberto Antonio Borges Quadrilha",
@@ -21,11 +21,11 @@ def show_news():
 
 @app.get("/Weather")
 def show_weather():
-    WeatherData.localizacao_automatica()
-
+    Localization.latitude_longitude()
     return
 
 @app.get("/Weather/{Manual}")
-def Localizacao_manual(Manual):
-    return {"localização": Manual}
+def show_custom_weather(manual):
+    Localization.latitude_longitude(manual)
+    return {"localização": manual}
 

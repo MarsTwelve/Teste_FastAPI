@@ -2,76 +2,71 @@ import geocoder
 import requests
 from datetime import datetime
 
-class WeatherData:
-    def __init__(self, localizacao):
-        self.localizacao = localizacao
-        self.bingkey = "ApLbhMovO66Qk048JY2Iqhx9vTuxAqh-P2mjk13xWt7G2TLuAzBMj_fKlBnWVimI"
-        self.WeatherAPIkey = "0663035a8316bd463c63093370b24744"
+
+class Localization:
+    def __init__(self, location=None):
+        self.location = location
+        self.bing_key = "ApLbhMovO66Qk048JY2Iqhx9vTuxAqh-P2mjk13xWt7G2TLuAzBMj_fKlBnWVimI"
+
+    def latitude_longitude(self):
+        if self.location is not None:
+            # Localização Manual, a partir do nome da cidade
+            geo_location = geocoder.bing(location=self.location, key=self.bing_key)
+            location = geo_location.latlang
+            longitude = location[0]
+            latitude = location[1]
+            return latitude, longitude
+        # Localização automática, a partir do IP do usuário
+        geo_location = geocoder.ip("me")
+        location = geo_location.latlng
+        latitude = location[0]
+        longitude = location[1]
+        return latitude, longitude
+
+    def get_address(self):
+        latitude, longitude = self.latitude_longitude()
+        geo_address = geocoder.bing([latitude, longitude], method="reverse", key=self.bing_key)
+        address_json = geo_address.json
+        address = address_json["address"]
+        return address
 
 
-    @staticmethod
-    def localizacao_automatica():
-        g = geocoder.ip("me")
-        location = g.latlng
-        a_lat = location[0]
-        a_lng = location[1]
-        return a_lat, a_lng
-    a_lat, a_lng = localizacao_automatica()
+class WeatherData(Localization):
 
-    def localizacao_manual(self):
-        g = geocoder.bing(location=self.localizacao, key=self.bingkey)
-        location = g.latlang
-        m_lat = location[0]
-        m_lng = location[1]
-        return m_lat, m_lng
-    m_lat, m_lng = localizacao_manual()
-
-
-    def achar_endereco(self, latitude, longitude):
-        g_endereco = geocoder.bing([latitude, longitude], method="reverse", key=self.bingkey)
-        endereco_json = g_endereco.json
-        endereco = endereco_json["address"]
-        return endereco
-
-    def pegar_previsao_tempo(self, latitude, longitude):
-        url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={self.WeatherAPIkey}&units=metric"
+    def get_forecast(self):
+        weather_key = "0663035a8316bd463c63093370b24744"
+        lat, lon = self.latitude_longitude()
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weather_key}&units=metric"
         response = requests.get(url)
         previsao = response.json()
         return previsao
 
-
-class PrevisaoTempo(WeatherData):
-    previsao = WeatherData.achar_endereco()
-    def clima(previsao):
-        weather = previsao["weather"][0]
+    def weather(self):
+        weather = self.get_forecast()["weather"][0]
         weather_desc = weather["description"]
         weather_icon = weather["icon"]
         return weather_desc, weather_icon
 
-
-    def temperatura(previsao):
-        temp = previsao["main"]["temp"]
-        humidity = previsao["main"]["humidity"]
+    def temperature(self):
+        temp = self.get_forecast()["main"]["temp"]
+        humidity = self.get_forecast()["main"]["humidity"]
         return temp, humidity
 
-
-    def vento(previsao):
-        speed = previsao["wind"]["speed"]
-        direction = previsao["wind"]["deg"]
+    def wind(self):
+        speed = self.get_forecast()["wind"]["speed"]
+        direction = self.get_forecast()["wind"]["deg"]
         return speed, direction
 
-
-    def chuva(previsao):
+    def rain(self):
         try:
-            rain_1h = previsao["rain"]["1h"]
+            rain_1h = self.get_forecast()["rain"]["1h"]
             return rain_1h
         except KeyError:
             return "Sem dados"
 
-
-    def horario_sol(previsao):
-        sunrise_unix = previsao["sys"]["sunrise"]
-        sunset_unix = previsao["sys"]["sunset"]
+    def sun_timing(self):
+        sunrise_unix = self.get_forecast()["sys"]["sunrise"]
+        sunset_unix = self.get_forecast()["sys"]["sunset"]
         sunrise_time = datetime.fromtimestamp(sunrise_unix)
         sunset_time = datetime.fromtimestamp(sunset_unix)
         sunrise = sunrise_time.strftime("%H:%M")
@@ -95,5 +90,3 @@ class PrevisaoTempo(WeatherData):
 #     weather = [clima_info, temp_info, wind_info, sun_info, rain_info]
 #     return weather
 
-
-print(empacotador_tempo())
