@@ -1,72 +1,43 @@
-import geocoder
 import requests
 from datetime import datetime
+from Localization import Localization
 
 
-class Localization:
-    def __init__(self, location=None):
-        self.location = location
-        self.bing_key = "ApLbhMovO66Qk048JY2Iqhx9vTuxAqh-P2mjk13xWt7G2TLuAzBMj_fKlBnWVimI"
-
-    def latitude_longitude(self):
-        if self.location is not None:
-            # Localização Manual, a partir do nome da cidade
-            geo_location = geocoder.bing(location=self.location, key=self.bing_key)
-            location = geo_location.latlang
-            longitude = location[0]
-            latitude = location[1]
-            return latitude, longitude
-        # Localização automática, a partir do IP do usuário
-        geo_location = geocoder.ip("me")
-        location = geo_location.latlng
-        latitude = location[0]
-        longitude = location[1]
-        return latitude, longitude
-
-    def get_address(self):
-        latitude, longitude = self.latitude_longitude()
-        geo_address = geocoder.bing([latitude, longitude], method="reverse", key=self.bing_key)
-        address_json = geo_address.json
-        address = address_json["address"]
-        return address
-
-
-class WeatherData(Localization):
+class WeatherData:
+    def __init__(self, latitude, longitude, forecast):
+        self.latitude = latitude
+        self.longitude = longitude
+        self.forecast = forecast
 
     def get_forecast(self):
         weather_key = "0663035a8316bd463c63093370b24744"
-        lat, lon = self.latitude_longitude()
-        url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={weather_key}&units=metric"
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={self.latitude}&lon={self.longitude}&appid={weather_key}&units=metric"
         response = requests.get(url)
         previsao = response.json()
         return previsao
 
     def weather(self):
-        weather = self.get_forecast()["weather"][0]
+        forecast = self.forecast
+        weather = forecast["weather"][0]
         weather_desc = weather["description"]
         weather_icon = weather["icon"]
         return weather_desc, weather_icon
 
     def temperature(self):
-        temp = self.get_forecast()["main"]["temp"]
-        humidity = self.get_forecast()["main"]["humidity"]
-        return temp, humidity
+        temp = self.forecast["main"]["temp"]
+        humidity = self.forecast["main"]["humidity"]
+        temp_list = [temp, humidity]
+        return temp_list
 
     def wind(self):
-        speed = self.get_forecast()["wind"]["speed"]
-        direction = self.get_forecast()["wind"]["deg"]
-        return speed, direction
-
-    def rain(self):
-        try:
-            rain_1h = self.get_forecast()["rain"]["1h"]
-            return rain_1h
-        except KeyError:
-            return "Sem dados"
+        speed = self.forecast["wind"]["speed"]
+        direction = self.forecast["wind"]["deg"]
+        wind_list = [speed, direction]
+        return wind_list
 
     def sun_timing(self):
-        sunrise_unix = self.get_forecast()["sys"]["sunrise"]
-        sunset_unix = self.get_forecast()["sys"]["sunset"]
+        sunrise_unix = self.forecast["sys"]["sunrise"]
+        sunset_unix = self.forecast["sys"]["sunset"]
         sunrise_time = datetime.fromtimestamp(sunrise_unix)
         sunset_time = datetime.fromtimestamp(sunset_unix)
         sunrise = sunrise_time.strftime("%H:%M")
@@ -74,19 +45,31 @@ class WeatherData(Localization):
         return sunrise, sunset
 
 
-# def empacotador_tempo():
-#     lat, lng = achar_lat_lng()
-#     json = pegar_previsao_tempo(lat, lng)
-#     desc, icon = clima(json)
-#     temp, humidity = temperatura(json)
-#     velocidade, direcao = vento(json)
-#     vol_chuva = chuva(json)
-#     sunrise, sunset = horario_sol(json)
-#     clima_info = {"tempo": desc, "icon_id": icon}
-#     temp_info = {"temperatura": temp, "humidade": humidity}
-#     wind_info = {"velocidade(m/s)": velocidade, "direção": direcao}
-#     sun_info = {"Nascer do Sol": sunrise, "Por do Sol": sunset}
-#     rain_info = {"Volume de chuva": vol_chuva}
-#     weather = [clima_info, temp_info, wind_info, sun_info, rain_info]
-#     return weather
+# Exemplos, lembrar de deletar depoix
+automatic_latlng = Localization.automatic_localization()
 
+Class1 = WeatherData(automatic_latlng[0], automatic_latlng[1], None)
+Func1 = WeatherData.get_forecast(Class1)
+Class2 = WeatherData(automatic_latlng[0], automatic_latlng[1], Func1)
+print(WeatherData.weather(Class2))
+print(WeatherData.temperature(Class2))
+print(WeatherData.wind(Class2))
+print(WeatherData.sun_timing(Class2))
+
+local = "Sao Jose Do Rio Preto, BR"
+ClassM1 = Localization(local, None)
+manual_latlng = Localization.manual_localization(ClassM1)
+
+Class1 = WeatherData(manual_latlng[0], manual_latlng[1], None)
+Func1 = WeatherData.get_forecast(Class1)
+Class2 = WeatherData(manual_latlng[0], manual_latlng[1], Func1)
+
+address_obj = Localization(None, manual_latlng)
+address = Localization.get_address(address_obj)
+print(address)
+print(WeatherData.weather(Class2))
+temp_data = WeatherData.temperature(Class2)
+print(f'{temp_data[0]}ºC, {temp_data[1]}')
+print(WeatherData.wind(Class2))
+print(WeatherData.sun_timing(Class2))
+# Exemplos, lembrar de deletar depoix
