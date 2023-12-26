@@ -28,18 +28,14 @@ class Localization:
         return address
 
 
-# Exemplos, lembrar de deletar depoix
-local = "Garça, BR"
-ClassM1 = Localization(local, None)
-FuncM1 = Localization.manual_localization(ClassM1)
-ClassM2 = Localization(None, FuncM1)
-FuncM2 = Localization.get_address(ClassM2)
-print(FuncM2)
+# Localizaçao Manual
+# local = "Garça, BR"
+# ClassM1 = Localization(local, None)
+# FuncM1 = Localization.manual_localization(ClassM1)
+# ClassM2 = Localization(None, FuncM1)
+# FuncM2 = Localization.get_address(ClassM2)
 
-
-FuncA1 = Localization.automatic_localization()
-print(FuncA1)
-ClassA1 = Localization(None, FuncA1)
-FuncA2 = Localization.get_address(ClassA1)
-print(FuncA2)
-# Exemplos, lembrar de deletar depoix
+# Localizaçao Automatica
+# FuncA1 = Localization.automatic_localization()
+# ClassA1 = Localization(None, FuncA1)
+# FuncA2 = Localization.get_address(ClassA1)

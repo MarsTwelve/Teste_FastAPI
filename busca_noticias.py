@@ -41,4 +41,5 @@ def empacotador_news():
         list_news.append(news_dict)
     return list_news
 
+
 print(empacotador_news())
