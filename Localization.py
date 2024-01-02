@@ -26,16 +26,3 @@ class Localization:
         address_json = geo_address.json
         address = address_json["address"]
         return address
-
-
-# Localizaçao Manual
-# local = "Garça, BR"
-# ClassM1 = Localization(local, None)
-# FuncM1 = Localization.manual_localization(ClassM1)
-# ClassM2 = Localization(None, FuncM1)
-# FuncM2 = Localization.get_address(ClassM2)
-
-# Localizaçao Automatica
-# FuncA1 = Localization.automatic_localization()
-# ClassA1 = Localization(None, FuncA1)
-# FuncA2 = Localization.get_address(ClassA1)

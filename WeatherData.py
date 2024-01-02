@@ -20,7 +20,8 @@ class WeatherData:
         weather = self.forecast["weather"][0]
         weather_desc = weather["description"]
         weather_icon = weather["icon"]
-        weather_list = [weather_desc, weather_icon]
+        image_url = f"https://openweathermap.org/img/wn/{weather_icon}@2x.png"
+        weather_list = [weather_desc, image_url]
         return weather_list
 
     def temperature(self):
