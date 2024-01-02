@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from busca_noticias import empacotador_news
+from GetNews import busca_noticias
+from NewsData import NewsFormat
 from Localization import Localization
 from WeatherData import WeatherData
 
@@ -17,8 +18,19 @@ async def root():
 
 @app.get("/News")
 def show_news():
-    news = empacotador_news()
-    return news
+    news_html = busca_noticias()
+    news_dict = {}
+    n = 1
+    for news in news_html:
+        titulo = NewsFormat.extrai_titulo(NewsFormat(news))
+        data_format = NewsFormat.extrai_data(NewsFormat(news))
+        link_format = NewsFormat.extrai_link(NewsFormat(news))
+        news_data = {"Titulo": titulo,
+                     "Data de Publicaçao": data_format,
+                     "Link da Noticia": link_format}
+        news_dict.update({f"Noticia Nº{n}": news_data})
+        n = n + 1
+    return news_dict
 
 
 @app.get("/Weather")
