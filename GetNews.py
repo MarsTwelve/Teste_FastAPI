@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def busca_noticias():
+def get_news():
     site = requests.get("https://news.google.com/rss?hl=pt-BR&gl=BR&ceid=BR:pt-419")
-    jornal = BeautifulSoup(site.text, "html.parser")
-    noticias = jornal.findAll("item")
-    return noticias
+    journal = BeautifulSoup(site.text, "html.parser")
+    news = journal.findAll("item")
+    return news
