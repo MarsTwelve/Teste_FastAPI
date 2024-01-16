@@ -1,26 +1,25 @@
 import re
-from GetNews import busca_noticias
 
 
 class NewsFormat:
 
-    def __init__(self, obj_news):
-        self.news = obj_news
+    def __init__(self, news):
+        self.news = news
 
-    def extrai_titulo(self):
-        mensagem = self.news.title.text
-        return mensagem
+    def extract_title(self):
+        title = self.news.title.text
+        return title
 
-    def extrai_data(self):
-        data_raw = self.news.pubdate.text
-        data = data_raw[5:16]
-        hora = data_raw[17:22]
-        completo = f"{data} as {hora}"
-        return completo
+    def extract_date(self):
+        raw_date = self.news.pubdate.text
+        date = raw_date[5:16]
+        hour = raw_date[17:22]
+        date_hour = f"{date} as {hour}"
+        return date_hour
 
-    def extrai_link(self):
+    def extract_link(self):
         source = self.news.description.text
-        comeco = re.search("https", source)
-        fim = re.search("oc=5", source)
-        link = source[comeco.start():fim.end()]
+        start = re.search("https", source)
+        stop = re.search("oc=5", source)
+        link = source[start.start():stop.end()]
         return link
